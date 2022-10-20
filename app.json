@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "weather",
-    "slug": "weather",
-    "version": "1.0.0",
+    "name": "mitWeather",
+    "slug": "mitWeather",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/adaptive-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#8857e8"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -18,16 +18,28 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.marianoibarra.mitweather"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundImage": "./assets/adaptive-background.png"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+      ,
+      "package": "com.marianoibarra.mitweather"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bfe46d27-3855-4e79-bd7a-59d112cdb03b"
+      }
     }
   }
 }
