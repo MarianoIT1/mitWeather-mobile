@@ -15,11 +15,15 @@ const NavbarCard = (props) => {
     const navigate = useNavigate();
     const goHome = () => navigate('/')
     const goToCity = (id) => navigate(`/detail/${id}`)
+    const goToCurrent = () => navigate('/detail/current')
     const { id } = useParams()
 
     const redirect = () => {
         let r, index;
-        if(props.cities.length <= 1) goHome();
+        if(props.cities.length <= 1) {
+            if(props.currentLocation) goToCurrent();
+            else goHome();
+        }
         else if(props.id == id) {
           index = props.cities.findIndex(city => city.id == id)
           if(index < props.cities.length-1) r = props.cities[index+1].id;
@@ -69,7 +73,8 @@ const gradient = {
 
 const mapStateToProps = (state) => {
     return {
-      cities: state.data
+      cities: state.data,
+      currentLocation: state.currentLocation
     }
   }
 

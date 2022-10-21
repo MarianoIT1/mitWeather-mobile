@@ -58,17 +58,18 @@ export const getCityRepeated = (indexRep) => {
     }
 }
 
-export const fetchCityByName = (payload, id, currentState) => {
+export const fetchCityByName = (payload, id, currentState, currentLocation) => {
     return (dispatch) => {
+        currentLocation = currentLocation === null ? {} : currentLocation
         dispatch(getCity())
         if(!/^[A-Z\s]+$/i.test(payload)) dispatch(getCityNotString());
         else fetchCityAPIByName(payload, id)
-                .then(city => {
-                    let indexRep = currentState.findIndex(currentCity => currentCity.apiId == city.apiId)
-                    if(indexRep < 0) {
-                        dispatch(getCitySuccess(city))
-                    } else {
+         .then(city => {
+                let indexRep = currentState.findIndex(currentCity => currentCity.apiId == city.apiId)
+                    if(indexRep >= 0 || currentLocation.apiId == city.apiId) {
                         dispatch(getCityRepeated(indexRep))
+                    } else {
+                        dispatch(getCitySuccess(city))
                     }
                 })
                 .catch((err) => {console.log(err); dispatch(getCityFailure())})
@@ -76,15 +77,16 @@ export const fetchCityByName = (payload, id, currentState) => {
     }
 }
 
-export const fetchCurrentCity = (id, currentState) => {
+export const fetchCurrentCity = (currentState) => {
     return (dispatch) => {
         dispatch(getCity())
         getLocation()
-        .then(response => fetchCityAPIByCoordinates(response.location, id))
+        .then(response => fetchCityAPIByCoordinates(response.location, 'current'))
             .then(city => {
+
                 let indexRep = currentState.findIndex(currentCity => currentCity.apiId == city.apiId)
                 if(indexRep < 0) {
-                    dispatch(getCurrentSuccess(city)) //cambiar por getCityLocated para agregar icono y quitar boton
+                    dispatch(getCurrentSuccess(city))
                 } else {
                     dispatch(getCityRepeated(indexRep))
                 }
@@ -93,17 +95,18 @@ export const fetchCurrentCity = (id, currentState) => {
     }
 }
 
-export const fetchCityByCoordinates = (location, id, currentState) => {
+export const fetchCityByCoordinates = (location, id, currentState, currentLocation) => {
     return (dispatch) => {
+        currentLocation = currentLocation === null ? {} : currentLocation
         dispatch(getCity())
         fetchCityAPIByCoordinates(location, id)
             .then(city => {
                 let indexRep = currentState.findIndex(currentCity => currentCity.apiId == city.apiId)
-                if(indexRep < 0) {
-                    dispatch(getCitySuccess(city))
-                } else {
-                    dispatch(getCityRepeated(indexRep))
-                }
+                    if(indexRep >= 0 || currentLocation.apiId == city.apiId) {
+                        dispatch(getCityRepeated(indexRep))
+                    } else {
+                        dispatch(getCitySuccess(city))
+                    }
             })
             .catch((err) => {console.log(err); dispatch(getCityFailure())})
     }

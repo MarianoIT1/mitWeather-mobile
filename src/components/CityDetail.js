@@ -33,6 +33,7 @@ const CityDetail = (props) => {
         
     
     return (
+        city &&
         <ScrollView 
                 contentContainerStyle={{flex: 1}}
                 style={{flex: 1}}
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
         overflow: "hidden"
     },
     scroll: {
-        paddingVertical: 24
+        paddingVertical: 18
     }
 })
 

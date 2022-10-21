@@ -44,7 +44,7 @@ const Navbar = (props) => {
 
 
     useEffect(() => {
-        if(searchOpen && !props.isFetching && !props.error && props.cities.length > 1) setTimeout(() => {setSearchOpen(!searchOpen)}, 100)
+        if(searchOpen && !props.isFetching && !props.error && props.cities.length + (props.currentLocation ? 1 : 0) > 1) setTimeout(() => {setSearchOpen(!searchOpen)}, 100)
 
     },[props.cities])
 
@@ -54,7 +54,7 @@ const Navbar = (props) => {
 
     return (
         <LinearGradient colors={gradient[city.img]} style={styles.container}>
-            <View style={{...styles.navbar, height: searchOpen && props.suggestions.length > 0 ? '100%' : 130,}}>
+            <View style={{...styles.navbar, height: searchOpen && props.suggestions.length > 0 ? '100%' : (props.cities.length !== 0 ? 130 : 85)}}>
                 <View style={styles.inputContainer}>
                     {!searchOpen && 
                     <View style={styles.logoContainer}>
@@ -71,7 +71,8 @@ const Navbar = (props) => {
                     </View>
                     }
                 </View>
-
+                {/* {props.cities.length + (props.currentLocation ? 1 : 0) > 1 && */}
+                {props.cities.length !== 0 &&
                 <View style={{flexDirection: 'row', paddingLeft: 10}}>
                 {props.currentLocation !== null && <NavbarCard key={props.currentLocation.apiId} img={props.currentLocation.img} name={props.currentLocation.name} temp={props.currentLocation.temp} id='current' />}
                     <ScrollView
@@ -79,7 +80,7 @@ const Navbar = (props) => {
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: false})}
                         horizontal
                         style={{...styles.cardScroll }}
-                        contentContainerStyle={{paddingLeft:"4%", paddingRight:'3%', alignItems: 'center'}}
+                        contentContainerStyle={{paddingRight:'4%', alignItems: 'center'}}
                         fadingEdgeLength={50}
                     >
                                         
@@ -87,6 +88,7 @@ const Navbar = (props) => {
                         }
                     </ScrollView>
                 </View>
+                }   
             </View>
             <Outlet />
         </LinearGradient>
@@ -122,6 +124,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 52,
         flexGrow: 0,
+        marginLeft: 4
         
     },
     logoContainer: {

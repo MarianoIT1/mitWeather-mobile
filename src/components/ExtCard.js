@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet} from "react-native";
 import icons from "../img";
+import Icon from "react-native-vector-icons/Fontisto"
 
 const ExtCard = (props) => {
     let d = props.city.dt_txt.split(/[- :]/);
@@ -19,8 +20,11 @@ const ExtCard = (props) => {
             <Text style={styles.temp}>
                 {`${Math.round(props.city.main.temp) - 273}°`}
             </Text>
-            <Text numberOfLines={2} ellipsizeMode={'clip'} style={styles.conditions}>
+            <Text numberOfLines={2} ellipsizeMode={'tail'} style={{...styles.conditions, flexGrow: 2}}>
                 {props.city.weather[0].description}
+            </Text>
+            <Text style={{...styles.conditions, marginTop: 4}}>
+                <Icon name="blood-drop" size={10} style={{color: 'rgba(255,255,255,0.5)'}}/>  {props.city.pop*100}%
             </Text>
         </View>
     )
@@ -32,22 +36,25 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 8,
         borderRightWidth: 1,
+        justifyContent: 'space-between'
     },
     hour: {
-        color: '#fff'        
+        color: '#fff',
+        marginBottom: 4        
     },
     temp: {
         color: '#fff',
         fontSize: 26,
-        marginBottom: 4
+        marginBottom: 2
     },
     conditions: {
         color: '#fff',
         textAlign: "center",
-        fontSize: 12,     
+        fontSize: 12, 
+        textAlignVertical: "bottom"    
     },
     iconContainer: {
-        marginVertical: 4
+        marginVertical: 8
     },
     icon: {
         width: 48,

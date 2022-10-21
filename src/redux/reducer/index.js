@@ -68,7 +68,7 @@ export default function rootReducer(state = initialState, action) {
                 ...state,
                 isFetching: false,
                 error: true,
-                placeholder: 'This city was already searched',
+                placeholder: action.indexRep === -1 ? 'This city is your current location' : 'This city was already searched',
                 indexRep: action.indexRep
             }
 

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import { NativeRouter, Route, Routes } from 'react-router-native';
 import CityDetail from './src/components/CityDetail';
+import Index from './src/components/Index';
 
 export default function App() {
   return (
@@ -12,9 +13,11 @@ export default function App() {
       <NativeRouter>
         <StatusBar style='light'/>
         <Routes>
-          <Route path='/' index element={ <Home /> }/>
-          <Route path='detail' element={ <Navbar /> }>
-            <Route path=':id' element={<CityDetail />}/>
+          <Route path='/' element={<Index />} >
+            <Route path='detail' element={ <Navbar /> }>
+              <Route path=':id' element={<CityDetail />}/>
+            </Route>
+            <Route index element={ <Home /> }/>
           </Route>
         </Routes>
       </NativeRouter>

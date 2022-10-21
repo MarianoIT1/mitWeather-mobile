@@ -1,21 +1,15 @@
 import {  useState, useEffect, useRef } from "react";
-import { TextInput, StyleSheet, View, Text, ActivityIndicator, Animated, TouchableOpacity } from "react-native"
+import { TextInput, StyleSheet, View, Text, ActivityIndicator, Animated, TouchableOpacity, Keyboard } from "react-native"
 import { fetchCityByName, fetchCurrentCity, getSuggestions, clearSuggestions, fetchCityByCoordinates, setCurrentRendered } from "../redux/actions";
 import { connect } from "react-redux";
-import { useNavigate } from "react-router-native";
 import Icon from 'react-native-vector-icons/Octicons'
 import Icon2 from 'react-native-vector-icons/MaterialIcons'
+import getCountryName from "../constants/countryCodes";
 
 const SearchBar = (props) => {
 
     const [value, setValue] = useState('')
-    const navigate = useNavigate();
-    const goToCity = (id) => navigate(`/detail/${id}`)
-    const goToCurrent = () => navigate(`/detail/current`)
-    const [lastLength, setLastLength] = useState(0)
     const [shaker, setShaker] = useState(0)
-    const [currentWasRedirect, setCurrentWasRedirect] = useState(false)
-
     const shakeBar = useRef(new Animated.Value(0)).current;
 
 
@@ -43,44 +37,30 @@ const SearchBar = (props) => {
       if(props.error) setShaker(shaker + 1)
     }, [props.error])
 
-    useEffect(() =>
-    { 
-      if(props.cities.length > lastLength){
-        goToCity(props.id-1);
-      }
-      setLastLength(props.cities.length)
-    }, [props.id])
-
-    useEffect(() => {
-      if(props.currentLocation !== null && !props.currentWasRendered){
-        props.setCurrentRendered()
-        goToCurrent()
-      }
-    }, [props.currentLocation])
-
-    useEffect(() =>
-    { 
-      if(typeof props.indexRep == 'number') goToCity(props.cities[props.indexRep].id)
-    }, [props.indexRep])
-
+    
     useEffect(() => {
       if(value.length >= 3) props.getSuggestions(value);
       else props.clearSuggestions()
     }, [value])
 
+
+
     
     const submitSearch = () => {
-      props.searchCityByName(value, props.id, props.cities)
+      props.searchCityByName(value, props.id, props.cities, props.currentLocation)
+      Keyboard.dismiss()
       setValue('')
     }
 
     const handleSearchCurrent = () => {
-      props.searchCurrentCity(props.id, props.cities)
+      props.searchCurrentCity(props.cities)
+      Keyboard.dismiss()
       setValue('')
    }
 
    const handleSearchSuggestion = (location) => {
-    props.fetchCityByCoordinates(location, props.id, props.cities)
+    props.fetchCityByCoordinates(location, props.id, props.cities, props.currentLocation)
+    Keyboard.dismiss()
     setValue('')
  }
 
@@ -99,6 +79,7 @@ const SearchBar = (props) => {
             onChangeText={setValue}
             onSubmitEditing={() => {submitSearch()}}
             autoFocus={props.autofocus}
+            editable={!props.isFetching}
         />
         <TouchableOpacity onPress={() => handleSearchCurrent() }>
           {props.currentLocation === null && !props.isFetching && value.length === 0 && <Icon2 style={styles.icon} name={"my-location"} color={"#FFF"} size={16}/>}
@@ -108,7 +89,7 @@ const SearchBar = (props) => {
       {value.length >= 3 && props.suggestions.length > 0 ? <View style={styles.sugContainer}>
         {props.suggestions.map(sug => 
           <TouchableOpacity style={styles.sugTouch} onPress={() => handleSearchSuggestion({latitude: sug.lat, longitude: sug.lon})}>
-            <Text style={styles.sugText}>{sug.name}, {sug.state}, {sug.country} </Text>
+            <Text style={styles.sugText}>{sug.name},{sug.state && ` ${sug.state},`} {getCountryName(sug.country)} </Text>
           </TouchableOpacity>
           )}
       </View> : null}
@@ -163,9 +144,9 @@ const mapStateToProps = (state) => {
   
   const mapDispatchToProps = (dispatch) => {
     return {
-      searchCityByName: (city, id, currentState) => dispatch(fetchCityByName(city, id, currentState)),
-      searchCurrentCity: (id, currentState) => dispatch(fetchCurrentCity(id, currentState)),
-      fetchCityByCoordinates: (location, id, currentState) => dispatch(fetchCityByCoordinates(location, id, currentState)),
+      searchCityByName: (city, id, currentState, currentLocation) => dispatch(fetchCityByName(city, id, currentState, currentLocation)),
+      searchCurrentCity: (currentState) => dispatch(fetchCurrentCity(currentState)),
+      fetchCityByCoordinates: (location, id, currentState, currentLocation) => dispatch(fetchCityByCoordinates(location, id, currentState, currentLocation)),
       getSuggestions: (cityName) => dispatch(getSuggestions(cityName)),
       clearSuggestions: () => dispatch(clearSuggestions()),
       setCurrentRendered: () => dispatch(setCurrentRendered())

@@ -1,5 +1,5 @@
-import React, {  useRef, useEffect } from "react";
-import { View, StyleSheet, Animated } from "react-native"
+import React, {  useRef, useEffect, useState } from "react";
+import { View, StyleSheet, Animated, Keyboard } from "react-native"
 import { LinearGradient } from "expo-linear-gradient";
 import icons from "../img";
 import SearchBar from "./SearchBar";
@@ -14,6 +14,22 @@ const Home = () => {
   const TextMoveIn = useRef(new Animated.Value(30)).current;
   const SearchFadeIn = useRef(new Animated.Value(0)).current;
   const SearchMoveIn = useRef(new Animated.Value(30)).current;
+
+  const [KeyboardStatus, setKeyboardStatus] = useState(undefined)
+
+  useEffect(() => {
+    const keyboardIsOpen = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardStatus(true);
+    });
+    const keyboardIsClose = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardStatus(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     Animated.stagger(100, [
@@ -58,10 +74,10 @@ const Home = () => {
 
 
     return (
-    <LinearGradient start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#936bd1", "#9167d6", "#8f62db", "#8d5ee0", "#8b59e5", "#8857e8", "#8455eb", "#8053ee", "#7953ef", "#7253f0", "#6a53f1", "#6153f2"]} style={styles.container}>
-        <View style={styles.logoContainer}>
-            <Animated.Image style={{...styles.logoImage, opacity: IconFadeIn, transform:[{translateY: IconMoveIn}] }} source={icons["02d"]}/>
-            <Animated.Text style={{...styles.logoText, opacity: TextFadeIn, transform:[{translateY: TextMoveIn}] }}>mitWeather</Animated.Text>
+    <LinearGradient start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#936bd1", "#9167d6", "#8f62db", "#8d5ee0", "#8b59e5", "#8857e8", "#8455eb", "#8053ee", "#7953ef", "#7253f0", "#6a53f1", "#6153f2"]} style={{...styles.container, justifyContent: KeyboardStatus ? "flex-start" : "center"}}>
+        <View style={{...styles.logoContainer, flexDirection: KeyboardStatus ? 'row' : 'column'}}>
+            <Animated.Image style={{...styles.logoImage, width: KeyboardStatus ? 80 : 120, height: KeyboardStatus ? 80 : 120,  opacity: IconFadeIn, transform:[{translateY: IconMoveIn}] }} source={icons["02d"]}/>
+            <Animated.Text style={{...styles.logoText, fontSize: KeyboardStatus ? 34 : 40, opacity: TextFadeIn, transform:[{translateY: TextMoveIn}] }}>mitWeather</Animated.Text>
         </View>
         <Animated.View style={{...styles.inputContainer, opacity: SearchFadeIn, transform:[{translateY: SearchMoveIn}] }}>
           <SearchBar /> 
@@ -74,25 +90,30 @@ const styles = StyleSheet.create ({
   inputContainer: {
     height: 40,
     width: "90%",
+    marginBottom: 60
   },
   container: {
     backgroundColor: "#8b59e5",
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
   },
   logoContainer: {
-    alignItems: "center"
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: "center",
+    marginTop: 45,
+    marginBottom: 20
   },
   logoText: {
     color: "#FFF",
     fontSize: 40,
     marginTop: -6,
-    marginBottom: 40
+    marginHorizontal: 5
   },
   logoImage: {
     width: 120,
     height: 120,
+    marginHorizontal: 5
   }
 })
 
