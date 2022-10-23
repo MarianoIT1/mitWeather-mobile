@@ -40,7 +40,7 @@ const CityDetail = (props) => {
                 refreshControl={
                 <RefreshControl
                 refreshing={props.isRefreshing}
-                onRefresh={() => props.refreshCities(props.cities)}
+                onRefresh={() => props.refreshCities(props.cities, props.currentLocation)}
                 colors={["#936bd1", "#f5ce42"]}
                 progressBackgroundColor={'white'}
                 progressViewOffset={20}

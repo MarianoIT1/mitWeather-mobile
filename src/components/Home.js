@@ -3,6 +3,7 @@ import { View, StyleSheet, Animated, Keyboard } from "react-native"
 import { LinearGradient } from "expo-linear-gradient";
 import icons from "../img";
 import SearchBar from "./SearchBar";
+import { useSelector } from "react-redux";
 
 
 
@@ -16,6 +17,8 @@ const Home = () => {
   const SearchMoveIn = useRef(new Animated.Value(30)).current;
 
   const [KeyboardStatus, setKeyboardStatus] = useState(undefined)
+
+  const suggestions = useSelector((state) => state.suggestions)
 
   useEffect(() => {
     const keyboardIsOpen = Keyboard.addListener("keyboardDidShow", () => {
@@ -74,7 +77,7 @@ const Home = () => {
 
 
     return (
-    <LinearGradient start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#936bd1", "#9167d6", "#8f62db", "#8d5ee0", "#8b59e5", "#8857e8", "#8455eb", "#8053ee", "#7953ef", "#7253f0", "#6a53f1", "#6153f2"]} style={{...styles.container, justifyContent: KeyboardStatus ? "flex-start" : "center"}}>
+    <LinearGradient start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={["#936bd1", "#9167d6", "#8f62db", "#8d5ee0", "#8b59e5", "#8857e8", "#8455eb", "#8053ee", "#7953ef", "#7253f0", "#6a53f1", "#6153f2"]} style={{...styles.container, justifyContent: KeyboardStatus && suggestions.length > 0 ? "flex-start" : "center"}}>
         <View style={{...styles.logoContainer, flexDirection: KeyboardStatus ? 'row' : 'column'}}>
             <Animated.Image style={{...styles.logoImage, width: KeyboardStatus ? 80 : 120, height: KeyboardStatus ? 80 : 120,  opacity: IconFadeIn, transform:[{translateY: IconMoveIn}] }} source={icons["02d"]}/>
             <Animated.Text style={{...styles.logoText, fontSize: KeyboardStatus ? 34 : 40, opacity: TextFadeIn, transform:[{translateY: TextMoveIn}] }}>mitWeather</Animated.Text>

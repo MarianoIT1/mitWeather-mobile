@@ -67,33 +67,33 @@ const SearchBar = (props) => {
    
 
     return (
-      <>
-      <Animated.View style={{...styles.searchBar, transform:[{translateX: shakeBar}]}}>
-        <Icon style={styles.icon} name={"search"} color={"#FFF"} size={16}/>
-        <TextInput 
-            style={styles.input}
-            placeholder={props.placeholder}
-            placeholderTextColor= "#FFF"
-            returnKeyType={"search"}
-            value={value}
-            onChangeText={setValue}
-            onSubmitEditing={() => {submitSearch()}}
-            autoFocus={props.autofocus}
-            editable={!props.isFetching}
-        />
-        <TouchableOpacity onPress={() => handleSearchCurrent() }>
-          {props.currentLocation === null && !props.isFetching && value.length === 0 && <Icon2 style={styles.icon} name={"my-location"} color={"#FFF"} size={16}/>}
-        </TouchableOpacity>
-        {props.isFetching ? <ActivityIndicator style={styles.icon} color='#FFF' size={"small"}/> : null}
-      </Animated.View>
-      {value.length >= 3 && props.suggestions.length > 0 ? <View style={styles.sugContainer}>
-        {props.suggestions.map(sug => 
-          <TouchableOpacity style={styles.sugTouch} onPress={() => handleSearchSuggestion({latitude: sug.lat, longitude: sug.lon})}>
-            <Text style={styles.sugText}>{sug.name},{sug.state && ` ${sug.state},`} {getCountryName(sug.country)} </Text>
+      <View>
+        <Animated.View style={{...styles.searchBar, transform:[{translateX: shakeBar}]}}>
+          <Icon style={styles.icon} name={"search"} color={"#FFF"} size={16}/>
+          <TextInput 
+              style={styles.input}
+              placeholder={props.placeholder}
+              placeholderTextColor= "#FFF"
+              returnKeyType={"search"}
+              value={value}
+              onChangeText={setValue}
+              onSubmitEditing={() => {submitSearch()}}
+              autoFocus={props.autofocus}
+              editable={!props.isF}
+          />
+          <TouchableOpacity onPress={() => handleSearchCurrent() }>
+            {props.currentLocation === null && !props.isFetching && value.length === 0 && <Icon2 style={styles.icon} name={"my-location"} color={"#FFF"} size={16}/>}
           </TouchableOpacity>
-          )}
-      </View> : null}
-      </>
+          {props.isFetching ? <ActivityIndicator style={styles.icon} color='#FFF' size={"small"}/> : null}
+        </Animated.View>
+        {value.length >= 3 && props.suggestions.length > 0 ? <View style={styles.sugContainer}>
+          {props.suggestions.map(sug => 
+            <TouchableOpacity style={styles.sugTouch} onPress={() => handleSearchSuggestion({latitude: sug.lat, longitude: sug.lon})}>
+              <Text style={styles.sugText}>{sug.name},{sug.state && ` ${sug.state},`} {getCountryName(sug.country)} </Text>
+            </TouchableOpacity>
+            )}
+        </View> : null}
+      </View>
     )
 }
 

@@ -1,4 +1,4 @@
-import {REMOVE_CITY, GET_CITY, GET_CITY_SUCCESS, GET_CITY_FAILURE, GET_CITY_REPEATED, GET_CITY_NOT_STRING, REFRESH_DATA, REFRESH_DATA_SUCCESS, SUGGESTION_SUCCESS, CLEAR_SUGGESTIONS, CLEAR_ERROR, GET_CURRENT_SUCCESS, SET_CURRENT_RENDERED} from '../actions';
+import {REMOVE_CITY, GET_CITY, GET_CITY_SUCCESS, GET_CITY_FAILURE, GET_CITY_REPEATED, GET_CITY_NOT_STRING, REFRESH_DATA, REFRESH_DATA_SUCCESS, SUGGESTION_SUCCESS, CLEAR_SUGGESTIONS, CLEAR_ERROR, GET_CURRENT_SUCCESS, SET_CURRENT_RENDERED, REFRESH_CURRENT} from '../actions';
 
 const initialState = { 
                        data: [],
@@ -44,6 +44,12 @@ export default function rootReducer(state = initialState, action) {
                 ...state,
                 isFetching: false,
                 placeholder: "Enter location",
+                currentLocation: action.currentLocation,
+            }
+
+        case REFRESH_CURRENT:
+            return {
+                ...state,
                 currentLocation: action.currentLocation,
             }
 
@@ -94,7 +100,7 @@ export default function rootReducer(state = initialState, action) {
         case SUGGESTION_SUCCESS:
             return {
                 ...state,
-                suggestions: action.payload
+                suggestions: action.payload.length === 0 ? state.suggestions : action.payload
             }
 
         case CLEAR_SUGGESTIONS:

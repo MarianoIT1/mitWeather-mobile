@@ -17,6 +17,7 @@ export const CLEAR_SUGGESTIONS = "CLEAR_SUGGESTIONS"
 export const CLEAR_ERROR = "CLEAR_ERROR"
 export const GET_CURRENT_SUCCESS = 'GET_CURRENT_SUCCESS'
 export const SET_CURRENT_RENDERED = 'SET_CURRENT_RENDERED'
+export const REFRESH_CURRENT = 'REFRESH_CURRENT'
 
 export const getCity = () => {
     return {
@@ -132,11 +133,26 @@ export const refreshDataSuccess = (payload) => {
     }
 }
 
-export const refreshCities = (payload) => {
+export const refreshCurrent = (payload) => {
+    return {
+        type: REFRESH_CURRENT,
+        payload 
+    }
+}
+
+export const refreshCities = (payload, currentLocation) => {
     return (dispatch) => {
         dispatch(refreshData())
-        refreshCitiesAPI(payload)
-        .then(cities => dispatch(refreshDataSuccess(cities)))
+        if(currentLocation !== null) {
+            getLocation()
+                .then(response => fetchCityAPIByCoordinates(response.location, 'current'))
+                .then(city => dispatch(getCurrentSuccess(city)))
+                .then(() => refreshCitiesAPI(payload))
+                .then(cities => dispatch(refreshDataSuccess(cities)))
+        } else {
+            refreshCitiesAPI(payload)
+                .then(cities => dispatch(refreshDataSuccess(cities)))
+        }
     }
 }
 

@@ -19,7 +19,7 @@ const Index = (props) => {
         goToCity(props.id-1);
         }
         setLastLength(props.cities.length)
-    }, [props.id])
+    }, [props.cities.length])
 
     useEffect(() => {
         if(props.currentLocation !== null && !props.currentWasRendered){
