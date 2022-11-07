@@ -1,4 +1,3 @@
-import { Alert } from 'react-native'
 import getLocation from '../../services/getLocation'
 import { getSuggestionsAPI } from '../../services/GetSuggestions'
 import {fetchCityAPIByCoordinates, fetchCityAPIByName} from '../../services/index'
@@ -18,6 +17,9 @@ export const CLEAR_ERROR = "CLEAR_ERROR"
 export const GET_CURRENT_SUCCESS = 'GET_CURRENT_SUCCESS'
 export const SET_CURRENT_RENDERED = 'SET_CURRENT_RENDERED'
 export const REFRESH_CURRENT = 'REFRESH_CURRENT'
+export const ALLOW_REDIRECT = 'ALLOW_REDIRECT'
+export const ALLOW_SCROLL = 'ALLOW_SCROLL'
+export const CHANGE_UNIT = 'CHANGE_UNIT'
 
 export const getCity = () => {
     return {
@@ -70,6 +72,7 @@ export const fetchCityByName = (payload, id, currentState, currentLocation) => {
                     if(indexRep >= 0 || currentLocation.apiId == city.apiId) {
                         dispatch(getCityRepeated(indexRep))
                     } else {
+                        
                         dispatch(getCitySuccess(city))
                     }
                 })
@@ -185,5 +188,25 @@ export const clearError = () => {
 export const setCurrentRendered = () => {
     return {
         type: SET_CURRENT_RENDERED
+    }
+}
+
+export const changeAllowRedirect = (payload) => {
+    return {
+        type: ALLOW_REDIRECT,
+        payload
+    }
+}
+
+export const changeAllowScroll = (payload) => {
+    return {
+        type: ALLOW_SCROLL,
+        payload
+    }
+}
+
+export const changeUnit = () => {
+    return {
+        type: CHANGE_UNIT,
     }
 }

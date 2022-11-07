@@ -1,25 +1,44 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
+import { AppState, ToastAndroid, Vibration } from "react-native";
 import { connect } from "react-redux";
 import { Outlet, useNavigate } from "react-router-native";
-import { setCurrentRendered } from "../redux/actions";
+import { changeAllowRedirect, refreshCities, setCurrentRendered } from "../redux/actions";
 
 
 const Index = (props) => {
 
     const navigate = useNavigate();
-    const goToCity = (id) => navigate(`/detail/${id}`)
-    const goToCurrent = () => navigate(`/detail/current`)
-    const [lastLength, setLastLength] = useState(0)
+    const goHome = () => navigate('/')
+    const goToCity = (id) => { Vibration.vibrate(5); props.changeAllowRedirect(false); navigate(`/detail/${id}`)}
+    const goToCurrent = () => {Vibration.vibrate(5); navigate(`/detail/current`)}
+    const [lastId, setLastId] = useState(0)
 
-    
+     
+    useEffect(() => {
+        props.changeAllowRedirect(false)    
+        if(props.saveData.length > 0) {
+            if(props.saveData.some(entry => entry.id === 'current')) goToCurrent();
+            else goToCity(props.saveData[0].id)
+            props.refreshCities(props.cities, props.currentLocation)
+        } else {
+            goHome()
+        }
+
+      return () => {
+        props.changeAllowRedirect(false)
+      }
+    }, [])
+
+
+
 
     useEffect(() =>
     {   
-        if(props.cities.length + (props.currentLocation ? 1 : 0) > lastLength){
-        goToCity(props.id-1);
+        if(props.id > lastId){
+            if(props.allowRedirect) {console.log('pasa por aca'); goToCity(props.id-1)};
         }
-        setLastLength(props.cities.length)
-    }, [props.cities.length])
+        setLastId(props.id)
+    }, [props.id])
 
     useEffect(() => {
         if(props.currentLocation !== null && !props.currentWasRendered){
@@ -36,6 +55,11 @@ const Index = (props) => {
         }
     }, [props.indexRep])
 
+    useEffect(() => {
+        console.log(props.saveData)
+    },[props.saveData])
+
+
     return (
         <>
             <Outlet />
@@ -50,13 +74,17 @@ const mapStateToProps = (state) => {
         cities: state.data,
         currentWasRendered: state.currentWasRendered,
         currentLocation: state.currentLocation,
-        indexRep: state.indexRep
+        indexRep: state.indexRep,
+        saveData: state.saveData,
+        allowRedirect: state.allowRedirect
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setCurrentRendered: () => dispatch(setCurrentRendered())
+        setCurrentRendered: () => dispatch(setCurrentRendered()),
+        refreshCities: (payload, currentLocation) => dispatch(refreshCities(payload, currentLocation)),
+        changeAllowRedirect: (payload) => dispatch(changeAllowRedirect(payload)) 
     }
 }
 

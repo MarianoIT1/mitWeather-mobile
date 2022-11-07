@@ -29,8 +29,8 @@ const Home = () => {
     });
 
     return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
+      keyboardIsOpen.remove();
+      keyboardIsClose.remove();
     };
   }, []);
 

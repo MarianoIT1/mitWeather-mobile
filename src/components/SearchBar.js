@@ -1,6 +1,6 @@
 import {  useState, useEffect, useRef } from "react";
-import { TextInput, StyleSheet, View, Text, ActivityIndicator, Animated, TouchableOpacity, Keyboard } from "react-native"
-import { fetchCityByName, fetchCurrentCity, getSuggestions, clearSuggestions, fetchCityByCoordinates, setCurrentRendered } from "../redux/actions";
+import { TextInput, StyleSheet, View, Text, ActivityIndicator, Animated, TouchableOpacity, Keyboard, Vibration } from "react-native"
+import { fetchCityByName, fetchCurrentCity, getSuggestions, clearSuggestions, fetchCityByCoordinates, setCurrentRendered, changeAllowRedirect } from "../redux/actions";
 import { connect } from "react-redux";
 import Icon from 'react-native-vector-icons/Octicons'
 import Icon2 from 'react-native-vector-icons/MaterialIcons'
@@ -14,23 +14,28 @@ const SearchBar = (props) => {
 
 
     useEffect(() => {
-      shaker > 0 &&
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(shakeBar, {
-            toValue: -5,
-            duration: 65
-          }),
-          Animated.timing(shakeBar, {
-            toValue: 5,
-            duration: 130
-          }),
-          Animated.timing(shakeBar, {
-            toValue: 0,
-            duration: 65
-          })
-        ]), {iterations: 2}
-      ).start()
+      if(shaker > 0) {
+        Vibration.vibrate([60,5,125,5,125,5,125,5,125,5])
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(shakeBar, {
+              toValue: -5,
+              duration: 65,
+              useNativeDriver: true
+            }),
+            Animated.timing(shakeBar, {
+              toValue: 5,
+              duration: 130,
+              useNativeDriver: true
+            }),
+            Animated.timing(shakeBar, {
+              toValue: 0,
+              duration: 65,
+              useNativeDriver: true
+            })
+          ]), {iterations: 2}
+        ).start()
+      }
     }, [shaker])
 
     useEffect(() => {
@@ -47,6 +52,7 @@ const SearchBar = (props) => {
 
     
     const submitSearch = () => {
+      props.changeAllowRedirect(true)
       props.searchCityByName(value, props.id, props.cities, props.currentLocation)
       Keyboard.dismiss()
       setValue('')
@@ -59,6 +65,7 @@ const SearchBar = (props) => {
    }
 
    const handleSearchSuggestion = (location) => {
+    props.changeAllowRedirect(true)
     props.fetchCityByCoordinates(location, props.id, props.cities, props.currentLocation)
     Keyboard.dismiss()
     setValue('')
@@ -67,33 +74,33 @@ const SearchBar = (props) => {
    
 
     return (
-      <View>
-        <Animated.View style={{...styles.searchBar, transform:[{translateX: shakeBar}]}}>
-          <Icon style={styles.icon} name={"search"} color={"#FFF"} size={16}/>
-          <TextInput 
-              style={styles.input}
-              placeholder={props.placeholder}
-              placeholderTextColor= "#FFF"
-              returnKeyType={"search"}
-              value={value}
-              onChangeText={setValue}
-              onSubmitEditing={() => {submitSearch()}}
-              autoFocus={props.autofocus}
-              editable={!props.isF}
-          />
-          <TouchableOpacity onPress={() => handleSearchCurrent() }>
-            {props.currentLocation === null && !props.isFetching && value.length === 0 && <Icon2 style={styles.icon} name={"my-location"} color={"#FFF"} size={16}/>}
+      <>
+      <Animated.View style={{...styles.searchBar, transform:[{translateX: shakeBar}]}}>
+        <Icon style={styles.icon} name={"search"} color={"#FFF"} size={16}/>
+        <TextInput 
+            style={styles.input}
+            placeholder={props.placeholder}
+            placeholderTextColor= "#FFF"
+            returnKeyType={"search"}
+            value={value}
+            onChangeText={setValue}
+            onSubmitEditing={() => {submitSearch()}}
+            autoFocus={props.autofocus}
+            editable={!props.isFetching}
+        />
+        <TouchableOpacity onPress={() => handleSearchCurrent() }>
+          {props.currentLocation === null && !props.isFetching && value.length === 0 && <Icon2 style={styles.icon} name={"my-location"} color={"#FFF"} size={16}/>}
+        </TouchableOpacity>
+        {props.isFetching ? <ActivityIndicator style={styles.icon} color='#FFF' size={"small"}/> : null}
+      </Animated.View>
+      {value.length >= 3 && props.suggestions.length > 0 ? <View style={styles.sugContainer}>
+        {props.suggestions.map((sug, key) => 
+          <TouchableOpacity key={key} style={styles.sugTouch} onPress={() => { Vibration.vibrate(10) ;handleSearchSuggestion({latitude: sug.lat, longitude: sug.lon})}}>
+            <Text style={styles.sugText}>{sug.name},{sug.state && ` ${sug.state},`} {getCountryName(sug.country)} </Text>
           </TouchableOpacity>
-          {props.isFetching ? <ActivityIndicator style={styles.icon} color='#FFF' size={"small"}/> : null}
-        </Animated.View>
-        {value.length >= 3 && props.suggestions.length > 0 ? <View style={styles.sugContainer}>
-          {props.suggestions.map(sug => 
-            <TouchableOpacity style={styles.sugTouch} onPress={() => handleSearchSuggestion({latitude: sug.lat, longitude: sug.lon})}>
-              <Text style={styles.sugText}>{sug.name},{sug.state && ` ${sug.state},`} {getCountryName(sug.country)} </Text>
-            </TouchableOpacity>
-            )}
-        </View> : null}
-      </View>
+          )}
+      </View> : null}
+      </>
     )
 }
 
@@ -149,7 +156,8 @@ const mapStateToProps = (state) => {
       fetchCityByCoordinates: (location, id, currentState, currentLocation) => dispatch(fetchCityByCoordinates(location, id, currentState, currentLocation)),
       getSuggestions: (cityName) => dispatch(getSuggestions(cityName)),
       clearSuggestions: () => dispatch(clearSuggestions()),
-      setCurrentRendered: () => dispatch(setCurrentRendered())
+      setCurrentRendered: () => dispatch(setCurrentRendered()),
+      changeAllowRedirect: (payload) => dispatch(changeAllowRedirect(payload))
     }
   }
 

@@ -1,16 +1,20 @@
-import {REMOVE_CITY, GET_CITY, GET_CITY_SUCCESS, GET_CITY_FAILURE, GET_CITY_REPEATED, GET_CITY_NOT_STRING, REFRESH_DATA, REFRESH_DATA_SUCCESS, SUGGESTION_SUCCESS, CLEAR_SUGGESTIONS, CLEAR_ERROR, GET_CURRENT_SUCCESS, SET_CURRENT_RENDERED, REFRESH_CURRENT} from '../actions';
+import {REMOVE_CITY, GET_CITY, GET_CITY_SUCCESS, GET_CITY_FAILURE, GET_CITY_REPEATED, GET_CITY_NOT_STRING, REFRESH_DATA, REFRESH_DATA_SUCCESS, SUGGESTION_SUCCESS, CLEAR_SUGGESTIONS, CLEAR_ERROR, GET_CURRENT_SUCCESS, SET_CURRENT_RENDERED, REFRESH_CURRENT, ALLOW_REDIRECT, ALLOW_SCROLL, CHANGE_UNIT} from '../actions';
 
 const initialState = { 
-                       data: [],
-                       isFetching: false,
-                       isRefreshing: false,
-                       error: false,
-                       placeholder: "Enter location",
-                       indexRep: false,
-                       id: 0,
-                       suggestions: [],
-                       currentLocation: null,
-                       currentWasRendered: false                  
+                        saveData: [],
+                        data: [],
+                        isFetching: false,
+                        isRefreshing: false,
+                        error: false,
+                        placeholder: "Enter location",
+                        indexRep: false,
+                        id: 0,
+                        suggestions: [],
+                        currentLocation: null,
+                        currentWasRendered: false,
+                        allowRedirect: false,
+                        allowScroll: 0,
+                        unit: 'celsius'           
                      }
 
 export default function rootReducer(state = initialState, action) {
@@ -35,7 +39,9 @@ export default function rootReducer(state = initialState, action) {
                 ],
                 isFetching: false,
                 placeholder: "Enter location",
+                saveData: [...state.saveData, {location: {latitude: action.city.lat, longitude: action.city.lon}, id: action.city.id}],
                 id: state.id + 1,
+                allowScroll: 2
                 
             }
             
@@ -45,6 +51,8 @@ export default function rootReducer(state = initialState, action) {
                 isFetching: false,
                 placeholder: "Enter location",
                 currentLocation: action.currentLocation,
+                saveData:[...state.saveData.filter(s => s.id !== 'current'), {location: {latitude: action.currentLocation.lat, longitude: action.currentLocation.lon}, id: 'current'}],
+                allowScroll: 1
             }
 
         case REFRESH_CURRENT:
@@ -81,7 +89,8 @@ export default function rootReducer(state = initialState, action) {
         case REMOVE_CITY:
             return {
                 ...state,
-                data: state.data.filter(oldCities => oldCities.id !== action.id)
+                data: state.data.filter(oldCities => oldCities.id !== action.id),
+                saveData: state.saveData.filter(oldSaveData => oldSaveData.id !== action.id)
             }
         
         case REFRESH_DATA:
@@ -94,7 +103,7 @@ export default function rootReducer(state = initialState, action) {
             return {
                 ...state,
                 data: [ ...action.payload],
-                isRefreshing: false
+                isRefreshing: false,
             }
 
         case SUGGESTION_SUCCESS:
@@ -122,6 +131,24 @@ export default function rootReducer(state = initialState, action) {
                 currentWasRendered: true
             }
 
+        case ALLOW_REDIRECT: 
+            return {
+                ...state,
+                allowRedirect: action.payload 
+        }
+
+        case ALLOW_SCROLL: 
+            return {
+                ...state,
+                allowScroll: action.payload 
+        }
+
+        case CHANGE_UNIT:
+            return {
+                ...state,
+                unit: state.unit === 'celsius' ? 'fahrenheit' : 'celsius'
+            }
+        
         default: return state;
     }
 }

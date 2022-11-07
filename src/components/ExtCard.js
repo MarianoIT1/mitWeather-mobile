@@ -2,12 +2,15 @@ import React from "react";
 import { View, Text, Image, StyleSheet} from "react-native";
 import icons from "../img";
 import Icon from "react-native-vector-icons/Fontisto"
+import { useSelector } from "react-redux";
+import { tempConvert } from "../constants/tempConverter";
 
 const ExtCard = (props) => {
     let d = props.city.dt_txt.split(/[- :]/);
     let timezone = props.timezone/3600
     let date = new Date(d[0], d[1], d[2], d[3], timezone +d[4], d[5])
     const firstCard = date.getHours() >= 21 ? true : false;
+    const unit = useSelector(state => state.unit)
 
     return (
         <View style={{...styles.container, borderRightColor: firstCard ? "rgba(255, 255, 255, 0.15)" : "transparent"}}>
@@ -18,13 +21,13 @@ const ExtCard = (props) => {
                 <Image style={styles.icon} source={icons[props.city.weather[0].icon]}  />
             </View>
             <Text style={styles.temp}>
-                {`${Math.round(props.city.main.temp) - 273}°`}
+                {`${tempConvert(props.city.main.temp, unit)}°`}
             </Text>
             <Text numberOfLines={2} ellipsizeMode={'tail'} style={{...styles.conditions, flexGrow: 2}}>
                 {props.city.weather[0].description}
             </Text>
             <Text style={{...styles.conditions, marginTop: 4}}>
-                <Icon name="blood-drop" size={10} style={{color: 'rgba(255,255,255,0.5)'}}/>  {props.city.pop*100}%
+                <Icon name="blood-drop" size={10} style={{color: 'rgba(255,255,255,0.5)'}}/>  {Math.floor(props.city.pop*100)}%
             </Text>
         </View>
     )

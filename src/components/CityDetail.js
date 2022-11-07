@@ -6,6 +6,7 @@ import { useParams } from "react-router-native";
 import { refreshCities } from "../redux/actions";
 import ExtCard from "./ExtCard";
 import Icon from "react-native-vector-icons/Octicons"
+import { tempConvert } from "../constants/tempConverter";
 
 const CityDetail = (props) => {
 
@@ -36,7 +37,7 @@ const CityDetail = (props) => {
         city &&
         <ScrollView 
                 contentContainerStyle={{flex: 1}}
-                style={{flex: 1}}
+                style={{flex: 1, zIndex: 0}}
                 refreshControl={
                 <RefreshControl
                 refreshing={props.isRefreshing}
@@ -54,7 +55,7 @@ const CityDetail = (props) => {
                             
                             
                         
-                        <Text style={styles.cityTemp}>{city.temp}°</Text>
+                        <Text style={styles.cityTemp}>{tempConvert(city.temp, props.unit)}°</Text>
                         <Text style={styles.cityConditions}>{city.weather}</Text>
                     </View>
                     <View>
@@ -64,7 +65,7 @@ const CityDetail = (props) => {
                 <View style={styles.extContainer}>
                     <ScrollView style={styles.scroll} horizontal fadingEdgeLength={60}>
                         {
-                            city.ext.map(e => <ExtCard key={city.dt} timezone={city.timezone} city={e} />)
+                            city.ext.map((e, key) => <ExtCard key={key} timezone={city.timezone} city={e} />)
                         }
                     </ScrollView>
                 </View>
@@ -147,7 +148,8 @@ const mapStateToProps = (state) => {
         currentLocation: state.currentLocation,
         isFetching: state.isFetching,
         isRefreshing: state.isRefreshing,
-        id: state.id
+        id: state.id,
+        unit: state.unit
     }
 }
 

@@ -1,11 +1,12 @@
 import React from "react";
-import {  StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {  StyleSheet, View, Text, TouchableOpacity, Vibration } from "react-native";
 import { Link, useLocation, useNavigate, useParams } from "react-router-native"
 import { connect } from "react-redux";
 import { removeCity } from "../redux/actions";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/Ionicons"
 import Icon2 from "react-native-vector-icons/Octicons"
+import { tempConvert } from "../constants/tempConverter";
 
 const NavbarCard = (props) => {
 
@@ -34,14 +35,14 @@ const NavbarCard = (props) => {
 
     return (
         <LinearGradient start={{x: 0, y: 1}} end={{x: 0, y: 0}} colors={gradient[props.img]} style={active? styles.activeContainer : styles.container}>
-            <Link underlayColor="#DDDDDD00" activeOpacity={1} style={styles.link} to={`/detail/${props.id}`}>
+            <Link underlayColor="#DDDDDD00" activeOpacity={1} onPressIn={() => Vibration.vibrate(3)} onPressOut={() => Vibration.vibrate(3)} style={styles.link} to={`/detail/${props.id}`}>
                 <View style={styles.textContainer}>
                     {props.id === 'current' && <Icon2 style={styles.icon} name={"location"} color={"#FFF"} size={12}/>}
                     <Text style={styles.cityName}>{props.name}</Text>
-                    <Text style={styles.cityTemp}>{props.temp}°</Text>
+                    <Text style={styles.cityTemp}>{tempConvert(props.temp, props.unit)}°</Text>
                 </View>
             </Link>
-            {props.id !== 'current' && <TouchableOpacity onPress={() => {redirect(); props.removeCity(props.id)}}>
+            {props.id !== 'current' && <TouchableOpacity onPress={() => { Vibration.vibrate(10) ;redirect(); props.removeCity(props.id)}}>
                 <View style={styles.close}>
                     <Icon style={styles.closeText} name={"md-close"} color={"#FFF"} size={12}/>
                 </View>
@@ -74,7 +75,8 @@ const gradient = {
 const mapStateToProps = (state) => {
     return {
       cities: state.data,
-      currentLocation: state.currentLocation
+      currentLocation: state.currentLocation,
+      unit: state.unit
     }
   }
 

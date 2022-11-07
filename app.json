@@ -2,10 +2,13 @@
   "expo": {
     "name": "mitWeather",
     "slug": "mitWeather",
-    "version": "0.2.0",
+    "version": "0.8.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "androidStatusBar": {
+      "barStyle": "light-content"
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -28,10 +31,11 @@
       },
       "permissions": [
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
-      ]
-      ,
-      "package": "com.marianoibarra.mitweather"
+        "ACCESS_FINE_LOCATION",
+        "VIBRATE"
+      ],
+      "package": "com.marianoibarra.mitweather",
+      "versionName": "0.8.0"
     },
     "web": {
       "favicon": "./assets/favicon.png"

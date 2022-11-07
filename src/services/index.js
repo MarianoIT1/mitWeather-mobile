@@ -3,9 +3,9 @@ export const fetchCityAPIByName = (cityName, id) => {
         .then(r => r.json())
         .then((res) => {
             const city = {
-                min: Math.round(res.main.temp_min) - 273,
-                max: Math.round(res.main.temp_max) - 273,
-                temp: Math.round(res.main.temp) - 273,
+                min: Math.round(res.main.temp_min),
+                max: Math.round(res.main.temp_max),
+                temp: Math.round(res.main.temp),
                 img: res.weather[0].icon,
                 apiId: res.id,
                 id: id,
@@ -35,9 +35,9 @@ export const fetchCityAPIByCoordinates = (location, id) => {
         .then(r => r.json())
         .then((res) => {
             const city = {
-                min: Math.round(res.main.temp_min) - 273,
-                max: Math.round(res.main.temp_max) - 273,
-                temp: Math.round(res.main.temp) - 273,
+                min: Math.round(res.main.temp_min),
+                max: Math.round(res.main.temp_max),
+                temp: Math.round(res.main.temp),
                 img: res.weather[0].icon,
                 apiId: res.id,
                 id: id,
@@ -68,6 +68,7 @@ export const fetchCityAPIByCoordinates = (location, id) => {
                         ext: res.list
                     }
                 return newCity
+            
                 })
             })
     }
