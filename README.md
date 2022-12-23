@@ -8,13 +8,13 @@
 
 New features were also added, among which I highlight:
 
-🔎 Real-time city suggestions as you type
-📌 Access permissions to exact location through GPS for search through coordinates
-🔄️ Pull to refresh
-💾 Use of local storage to keep the search data when closing the application, so when reopening it, the last searches are recovered and a refresh is performed
-📳 Haptic (vibration) feedback when interacting with interface elements
-🌤 Change of units between metric and imperial system (Celsius / Fahrenheit)
-🎨 Icon and splash screen design
+ 🔎  Real-time city suggestions as you type.   
+ 📌  Access permissions to exact location through GPS for search through coordinates.   
+ 🔄️  Pull to refresh.   
+ 💾  Use of local storage to keep the search data when closing the application, so when reopening it, the last searches are recovered and a refresh is performed.   
+ 📳  Haptic (vibration) feedback when interacting with interface elements.   
+ 🌤  Change of units between metric and imperial system (Celsius / Fahrenheit).   
+ 🎨  Icon and splash screen design.   
 
 🛍️ In case you want to try it, it is already available in the android Play Store: https://lnkd.in/dar6BDat
 
@@ -26,5 +26,5 @@ Some of the technologies used are:
 * Android Studio
 * Adobe Illustrator
 
-✨**OpenWeatherMap API** data was consumed
+✨ **OpenWeatherMap API** data was consumed
 
